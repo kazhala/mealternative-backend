@@ -1,16 +1,25 @@
 {
   "name": "backend-mealternative",
   "version": "1.0.0",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=8.10.0"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "KAZhala",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "nodemon": "^2.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-plugin-node": "^11.0.0"
   }
 }
