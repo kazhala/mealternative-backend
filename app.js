@@ -4,13 +4,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 require('dotenv').config();
 
 const { connectDb } = require('./helpers/dbHelpers');
 
 // routes
-const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
 
 // initialise main app running express
 const app = express();
@@ -23,7 +22,7 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 
 // app routes
-app.use('/api', userRoutes);
+app.use('/api', authRoutes);
 
 // port for running the apis
 const port = process.env.PORT;

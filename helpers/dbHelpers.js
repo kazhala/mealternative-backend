@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const connectDb = async () => {
+module.exports.connectDb = async () => {
   try {
     await mongoose.connect(process.env.DATABASE, {
       useNewUrlParser: true,
-      // useCreateIndex: true,
-      // useFindAndModify: false,
+      useCreateIndex: true,
+      useFindAndModify: false,
       useUnifiedTopology: true
     });
     console.log('Databse connected');
@@ -14,4 +14,6 @@ const connectDb = async () => {
   }
 };
 
-module.exports.connectDb = connectDb;
+module.exports.testDb = () => {
+  console.log('test');
+};
