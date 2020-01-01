@@ -4,13 +4,19 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 require('dotenv').config();
+
+const { connectDb } = require('./helpers/dbHelpers');
 
 // routes
 const userRoutes = require('./routes/user');
 
-// main app running express
+// initialise main app running express
 const app = express();
+
+// connect to database
+connectDb();
 
 // app middlewares
 app.use(morgan('dev'));
