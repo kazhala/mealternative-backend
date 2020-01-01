@@ -16,3 +16,34 @@ module.exports.signUp = async (req, res) => {
     });
   }
 };
+
+module.exports.signIn = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email }).select('+hashed_password');
+    if (user) {
+      const passwordMatch = await bcrypt.compare(
+        password,
+        user.hashed_password
+      );
+      if (passwordMatch) {
+        res.status(200).json({
+          message: `Welcome back ${user.username}`
+        });
+      } else {
+        res.status(401).json({
+          message: 'Password does not match'
+        });
+      }
+    } else {
+      res.status(404).json({
+        message: 'Email does not exist'
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      message: dbErrorHandler(err)
+    });
+  }
+};
