@@ -14,6 +14,34 @@ module.exports.connectDb = async () => {
   }
 };
 
-module.exports.testDb = () => {
-  console.log('test');
+module.exports.dbErrorHandler = error => {
+  let message = '';
+  const { errmsg, code } = error;
+  switch (code) {
+    case 11000:
+      message = getErrorMessage(errmsg);
+      break;
+    case 11001:
+      console.log(error);
+      break;
+    default:
+      console.log(error);
+      break;
+  }
+  return message;
+};
+
+const getErrorMessage = errmsg => {
+  let output;
+  try {
+    let fieldName = errmsg.substring(
+      errmsg.lastIndexOf('.$') + 2,
+      errmsg.lastIndexOf('_1')
+    );
+    output =
+      fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exits';
+  } catch (err) {
+    output = 'Unique field already exists';
+  }
+  return output;
 };
