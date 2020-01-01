@@ -23,9 +23,11 @@ module.exports.dbErrorHandler = error => {
       break;
     case 11001:
       console.log(error);
+      message = errmsg;
       break;
     default:
       console.log(error);
+      message = errmsg;
       break;
   }
   return message;
