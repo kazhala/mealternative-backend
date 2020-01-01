@@ -9,8 +9,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true,
     max: 32,
-    unique: true,
-    index: true
+    unique: true
   },
   email: {
     type: String,
@@ -28,6 +27,9 @@ const userSchema = new mongoose.Schema({
     default: 0
   },
   photoUrl: {
+    type: String
+  },
+  about: {
     type: String
   }
 });
