@@ -1,31 +1,45 @@
+/*
+  Auth route controller
+*/
+
+// model
 const User = require('../models/user');
+// package
 const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
+// helper
 const { dbErrorHandler } = require('../helpers/dbHelpers');
 
+// set sendGrid api key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+// sign up first step (send email)
 module.exports.preSignUp = async (req, res) => {
   const { username, email, password } = req.body;
   try {
+    // check if username exists
     let user = await User.findOne({ username });
     if (user) {
       return res.status(403).json({
         error: 'Username is taken'
       });
     }
+    // check if email exists
     user = await User.findOne({ email: email.toLowerCase() });
     if (user) {
       return res.status(403).json({
         error: 'Email already exists'
       });
     }
+
+    // generate jwt token for account activation
     const token = jwt.sign(
       { username, email, password },
       process.env.JWT_ACCOUNT_ACTIVATION,
       { expiresIn: '10m' }
     );
+    // prepare email data
     const emailData = {
       from: process.env.EMAIL_FROM,
       to: email,
@@ -48,21 +62,11 @@ module.exports.preSignUp = async (req, res) => {
       error: 'Something went wrong, try again later'
     });
   }
-
-  // const hashed_password = await bcrypt.hash(password, 10);
-  // const user = new User({ username, email, hashed_password });
-  // try {
-  //   const response = await user.save();
-  //   res.json(response);
-  // } catch (err) {
-  //   console.log(err);
-  //   res.status(500).send({
-  //     message: dbErrorHandler(err)
-  //   });
-  // }
 };
 
+// activate the account on user click link
 module.exports.signUp = async (req, res) => {
+  // get token from body sent by client side
   const token = req.body.token;
   if (token) {
     try {
@@ -93,11 +97,14 @@ module.exports.signUp = async (req, res) => {
   }
 };
 
+// sign in user
 module.exports.signIn = async (req, res) => {
   const { email, password } = req.body;
   try {
+    // get user, get password (default won't return password)
     const user = await User.findOne({ email }).select('+hashed_password');
     if (user) {
+      // compare if hashed_password is match with user input
       const passwordMatch = await bcrypt.compare(
         password,
         user.hashed_password
