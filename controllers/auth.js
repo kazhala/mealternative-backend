@@ -62,7 +62,36 @@ module.exports.preSignUp = async (req, res) => {
   // }
 };
 
-module.exports.signUp = async (req, res) => {};
+module.exports.signUp = async (req, res) => {
+  const token = req.body.token;
+  if (token) {
+    try {
+      let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
+      const { username, email, password } = decoded;
+      const hashed_password = await bcrypt.hash(password, 10);
+      const user = new User({ username, email, hashed_password });
+      await user.save();
+      res.status(200).json({
+        message: 'Sign Up success, please sign in'
+      });
+    } catch (err) {
+      console.log(err);
+      if (err.message) {
+        res.status(400).json({
+          error: err.message
+        });
+      } else {
+        res.status(500).json({
+          error: 'Something went wrong, try again later'
+        });
+      }
+    }
+  } else {
+    res.status(404).json({
+      error: 'Could not find the token, please try again'
+    });
+  }
+};
 
 module.exports.signIn = async (req, res) => {
   const { email, password } = req.body;
