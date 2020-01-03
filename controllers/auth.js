@@ -68,27 +68,24 @@ module.exports.preSignUp = async (req, res) => {
 module.exports.signUp = async (req, res) => {
   // get token from body sent by client side
   const token = req.body.token;
-  if (token) {
-    try {
-      let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
-      const { username, email, password } = decoded;
-      const hashed_password = await bcrypt.hash(password, 10);
-      const user = new User({ username, email, hashed_password });
-      await user.save();
-      res.status(200).json({
-        message: 'Sign Up success, please sign in'
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(422).json({
-        error: 'Token is invalid, please sign up again'
-      });
-    }
-  } else {
-    res.status(404).json({
-      error: 'Could not find the token, please sign up again'
+  try {
+    let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
+    const { username, email, password } = decoded;
+    const hashed_password = await bcrypt.hash(password, 10);
+    const user = new User({ username, email, hashed_password });
+    await user.save();
+    res.status(200).json({
+      message: 'Sign Up success, please sign in'
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(422).json({
+      error: 'Token is invalid, please sign up again'
     });
   }
+  res.status(404).json({
+    error: 'Could not find the token, please sign up again'
+  });
 };
 
 // sign in user
@@ -164,7 +161,7 @@ module.exports.forgotPassword = async (req, res) => {
         <p>https://mealternative.com</p>
       `
     };
-    await user.updateOne({ resetPasswordLink: token });
+    await user.updateOne({ passwordResetToken: token });
     await sgMail.send(emailData);
     return res.status(200).json({
       message: `Reset link has been sent to ${email}. Follow the instructions to reset your password. Link expires in 10 mins`
@@ -173,6 +170,43 @@ module.exports.forgotPassword = async (req, res) => {
     console.log(err);
     res.status(500).json({
       error: 'Something went wrong, try again later'
+    });
+  }
+};
+
+module.exports.resetPassword = async (req, res) => {
+  const { passwordResetToken, newPassword } = req.body;
+  try {
+    let decoded = jwt.verify(
+      passwordResetToken,
+      process.env.JWT_RESET_PASSWORD
+    );
+    let user = await User.findOne({ _id: decoded._id }).select(
+      '+passwordResetToken'
+    );
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+    console.log(user);
+    if (user.passwordResetToken === passwordResetToken) {
+      const newHashed_password = await bcrypt.hash(newPassword, 10);
+      user.hashed_password = newHashed_password;
+      user.passwordResetToken = '';
+      await user.save();
+      res.status(200).json({
+        message: 'Password reset success'
+      });
+    } else {
+      res.status(400).json({
+        error: 'Something went wrong, try again later'
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(422).json({
+      error: 'Token is invalid, please try again'
     });
   }
 };

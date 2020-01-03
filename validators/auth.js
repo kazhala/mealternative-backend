@@ -15,8 +15,7 @@ module.exports.preSignupValidator = [
 
 module.exports.signUpValidator = [
   check('token')
-    .not()
-    .isEmpty()
+    .isJWT()
     .withMessage('Could not find the token, please sign up again')
 ];
 
@@ -30,4 +29,13 @@ module.exports.forgotPasswordValidator = [
   check('email')
     .isEmail()
     .withMessage('Must be a valid email address')
+];
+
+module.exports.resetPasswordValidator = [
+  check('passwordResetToken')
+    .isJWT()
+    .withMessage('Token invalid, please try again'),
+  check('newPassword')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long')
 ];

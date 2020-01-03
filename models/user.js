@@ -32,10 +32,10 @@ const userSchema = new mongoose.Schema({
   about: {
     type: String
   },
-  resetPasswordLink: {
+  passwordResetToken: {
     type: String,
     default: '',
-    selec: false
+    select: false
   }
 });
 

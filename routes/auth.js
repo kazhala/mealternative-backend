@@ -5,13 +5,15 @@ const {
   signIn,
   preSignUp,
   signOut,
-  forgotPassword
+  forgotPassword,
+  resetPassword
 } = require('../controllers/auth');
 const {
   preSignupValidator,
   signUpValidator,
   signInValidator,
-  forgotPasswordValidator
+  forgotPasswordValidator,
+  resetPasswordValidator
 } = require('../validators/auth');
 const { runValidation } = require('../validators');
 
@@ -24,6 +26,12 @@ router.post(
   forgotPasswordValidator,
   runValidation,
   forgotPassword
+);
+router.post(
+  '/reset-password',
+  resetPasswordValidator,
+  runValidation,
+  resetPassword
 );
 
 module.exports = router;
