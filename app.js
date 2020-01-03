@@ -4,6 +4,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const { connectDb } = require('./helpers/dbHelpers');
@@ -20,6 +21,7 @@ connectDb();
 // app middlewares
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // app routes
 app.use('/api', authRoutes);

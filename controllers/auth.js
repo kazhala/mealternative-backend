@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
 // helper
-const { dbErrorHandler } = require('../helpers/dbHelpers');
+// const { dbErrorHandler } = require('../helpers/dbHelpers');
 
 // set sendGrid api key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -110,8 +110,15 @@ module.exports.signIn = async (req, res) => {
         user.hashed_password
       );
       if (passwordMatch) {
+        console.log(user);
+        const { _id, username, email, role } = user;
+        const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
+          expiresIn: '7d'
+        });
+        res.cookie('token', token, { expiresIn: '7d' });
         res.status(200).json({
-          message: `Welcome back ${user.username}`
+          token,
+          user: { _id, username, email, role }
         });
       } else {
         res.status(401).json({
@@ -126,7 +133,7 @@ module.exports.signIn = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).send({
-      message: dbErrorHandler(err)
+      message: 'Something went wrong, please try again later'
     });
   }
 };
