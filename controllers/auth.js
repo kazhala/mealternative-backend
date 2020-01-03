@@ -137,3 +137,11 @@ module.exports.signIn = async (req, res) => {
     });
   }
 };
+
+// sign out the user
+module.exports.signOut = (req, res) => {
+  res.clearCookie('token');
+  res.status(200).json({
+    message: 'Signout success'
+  });
+};
