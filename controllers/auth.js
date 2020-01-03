@@ -8,8 +8,6 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
-// helper
-// const { dbErrorHandler } = require('../helpers/dbHelpers');
 
 // set sendGrid api key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -57,6 +55,7 @@ module.exports.preSignUp = async (req, res) => {
       message: `Email has been sent to ${email}. Follow the instructions to activate your account`
     });
   } catch (err) {
+    // would be internet error if this catches error
     console.log(err);
     res.status(500).json({
       error: 'Something went wrong, try again later'
@@ -69,6 +68,7 @@ module.exports.signUp = async (req, res) => {
   // get token from body sent by client side
   const token = req.body.token;
   try {
+    // verify the token
     let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
     const { username, email, password } = decoded;
     const hashed_password = await bcrypt.hash(password, 10);
@@ -78,14 +78,12 @@ module.exports.signUp = async (req, res) => {
       message: 'Sign Up success, please sign in'
     });
   } catch (err) {
+    // would be invalid token if it catches any error
     console.log(err);
     res.status(422).json({
       error: 'Token is invalid, please sign up again'
     });
   }
-  res.status(404).json({
-    error: 'Could not find the token, please sign up again'
-  });
 };
 
 // sign in user
@@ -103,9 +101,11 @@ module.exports.signIn = async (req, res) => {
       if (passwordMatch) {
         console.log(user);
         const { _id, username, email, role } = user;
+        // 7 day expiry date
         const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
           expiresIn: '7d'
         });
+        // TODO: check if we acutally need cookie-parser package at backend
         res.cookie('token', token, { expiresIn: '7d' });
         res.status(200).json({
           token,
@@ -122,6 +122,7 @@ module.exports.signIn = async (req, res) => {
       });
     }
   } catch (err) {
+    // catch internet error
     console.log(err);
     res.status(500).send({
       message: 'Something went wrong, please try again later'
@@ -137,7 +138,9 @@ module.exports.signOut = (req, res) => {
   });
 };
 
+// handle forgot password
 module.exports.forgotPassword = async (req, res) => {
+  // frontend need to pass email to chanage password
   const { email } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -149,6 +152,8 @@ module.exports.forgotPassword = async (req, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_RESET_PASSWORD, {
       expiresIn: '10m'
     });
+
+    // prepare email data
     const emailData = {
       from: process.env.EMAIL_FROM,
       to: email,
@@ -161,12 +166,15 @@ module.exports.forgotPassword = async (req, res) => {
         <p>https://mealternative.com</p>
       `
     };
+
+    // store the token into user database temporarily
     await user.updateOne({ passwordResetToken: token });
     await sgMail.send(emailData);
     return res.status(200).json({
       message: `Reset link has been sent to ${email}. Follow the instructions to reset your password. Link expires in 10 mins`
     });
   } catch (err) {
+    // internet error
     console.log(err);
     res.status(500).json({
       error: 'Something went wrong, try again later'
@@ -174,13 +182,17 @@ module.exports.forgotPassword = async (req, res) => {
   }
 };
 
+// the actual reset password backend handler
 module.exports.resetPassword = async (req, res) => {
+  // get the token and new password from frontend
   const { passwordResetToken, newPassword } = req.body;
   try {
     let decoded = jwt.verify(
       passwordResetToken,
       process.env.JWT_RESET_PASSWORD
     );
+
+    // get the user with token field
     let user = await User.findOne({ _id: decoded._id }).select(
       '+passwordResetToken'
     );
@@ -189,7 +201,7 @@ module.exports.resetPassword = async (req, res) => {
         error: 'User not found'
       });
     }
-    console.log(user);
+    // if both token match and valid, change password
     if (user.passwordResetToken === passwordResetToken) {
       const newHashed_password = await bcrypt.hash(newPassword, 10);
       user.hashed_password = newHashed_password;
@@ -204,6 +216,7 @@ module.exports.resetPassword = async (req, res) => {
       });
     }
   } catch (err) {
+    // internet error or token invalid
     console.log(err);
     res.status(422).json({
       error: 'Token is invalid, please try again'

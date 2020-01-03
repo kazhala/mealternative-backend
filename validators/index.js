@@ -1,3 +1,6 @@
+/*
+  Run the validation, if no runValidation, validator would not work
+*/
 const { validationResult } = require('express-validator');
 
 module.exports.runValidation = (req, res, next) => {

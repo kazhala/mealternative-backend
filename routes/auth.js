@@ -1,3 +1,6 @@
+/*
+  Auth route for handling all auth related requests
+*/
 const express = require('express');
 const router = express.Router();
 const {
@@ -17,6 +20,7 @@ const {
 } = require('../validators/auth');
 const { runValidation } = require('../validators');
 
+// routes
 router.post('/pre-signup', preSignupValidator, runValidation, preSignUp);
 router.post('/signup', signUpValidator, runValidation, signUp);
 router.post('/signin', signInValidator, runValidation, signIn);
