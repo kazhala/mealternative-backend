@@ -80,19 +80,13 @@ module.exports.signUp = async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      if (err.message) {
-        res.status(400).json({
-          error: err.message
-        });
-      } else {
-        res.status(500).json({
-          error: 'Something went wrong, try again later'
-        });
-      }
+      res.status(422).json({
+        error: 'Token is invalid, please sign up again'
+      });
     }
   } else {
     res.status(404).json({
-      error: 'Could not find the token, please try again'
+      error: 'Could not find the token, please sign up again'
     });
   }
 };
@@ -144,4 +138,41 @@ module.exports.signOut = (req, res) => {
   res.status(200).json({
     message: 'Signout success'
   });
+};
+
+module.exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_RESET_PASSWORD, {
+      expiresIn: '10m'
+    });
+    const emailData = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: 'Password reset link',
+      html: `
+        <p>Please use the following link to reset your password:</p>
+        <p>${process.env.CLIENT_URL}/auth/password-reset/${token}</p>
+        <hr />
+        <p>This email may contain sensetive information</p>
+        <p>https://mealternative.com</p>
+      `
+    };
+    await user.updateOne({ resetPasswordLink: token });
+    await sgMail.send(emailData);
+    return res.status(200).json({
+      message: `Reset link has been sent to ${email}. Follow the instructions to reset your password. Link expires in 10 mins`
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: 'Something went wrong, try again later'
+    });
+  }
 };

@@ -1,6 +1,6 @@
 const { check } = require('express-validator');
 
-module.exports.userSignupValidator = [
+module.exports.preSignupValidator = [
   check('username')
     .not()
     .isEmpty()
@@ -11,4 +11,23 @@ module.exports.userSignupValidator = [
   check('password')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters long')
+];
+
+module.exports.signUpValidator = [
+  check('token')
+    .not()
+    .isEmpty()
+    .withMessage('Could not find the token, please sign up again')
+];
+
+module.exports.signInValidator = [
+  check('email')
+    .isEmail()
+    .withMessage('Must be a valid email address')
+];
+
+module.exports.forgotPasswordValidator = [
+  check('email')
+    .isEmail()
+    .withMessage('Must be a valid email address')
 ];
