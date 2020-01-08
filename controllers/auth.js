@@ -44,7 +44,7 @@ module.exports.preSignUp = async (req, res) => {
       subject: `Account activation link`,
       html: `
       <p>Please use the following link to activate your account:</p>
-      <p>${process.env.CLIENT_URL}/auth/account/activate/${token}</p>
+      <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
       <hr />
       <p>This email may contain sensitive information</p>
       <p>https://mealternative.com</p>
@@ -83,6 +83,27 @@ module.exports.signUp = async (req, res) => {
     res.status(422).json({
       error: 'Token is invalid, please sign up again'
     });
+  }
+};
+
+module.exports.preSignIn = async (req, res, next) => {
+  const { token, email, password } = req.body;
+  console.log(token);
+  if (email || password) {
+    next();
+  } else {
+    try {
+      let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
+      const { email, password } = decoded;
+      req.body.email = email;
+      req.body.password = password;
+      next();
+    } catch (err) {
+      console.log(err);
+      res.status(422).json({
+        error: 'Auto sign in failed, please sign in manually'
+      });
+    }
   }
 };
 
