@@ -167,7 +167,7 @@ module.exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
-        error: 'User not found'
+        error: 'Email does not exist'
       });
     }
     const token = jwt.sign({ _id: user._id }, process.env.JWT_RESET_PASSWORD, {
