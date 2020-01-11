@@ -134,19 +134,19 @@ module.exports.signIn = async (req, res) => {
         });
       } else {
         res.status(401).json({
-          message: 'Password does not match'
+          error: 'Password does not match'
         });
       }
     } else {
       res.status(404).json({
-        message: 'Email does not exist'
+        error: 'Email does not exist'
       });
     }
   } catch (err) {
     // catch internet error
     console.log(err);
     res.status(500).send({
-      message: 'Something went wrong, please try again later'
+      error: 'Something went wrong, please try again later'
     });
   }
 };
