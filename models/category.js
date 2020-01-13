@@ -9,7 +9,8 @@ const categorySchema = new mongoose.Schema({
     type: String,
     trim: true,
     require: true,
-    max: 30,
+    minlength: 3,
+    maxlength: 50,
     unique: true
   }
 });
