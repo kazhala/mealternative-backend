@@ -45,11 +45,14 @@ const recipeSchema = new mongoose.Schema(
         'https://res.cloudinary.com/kazhala/image/upload/v1578954595/mealternative/noimage_jo5klk.png',
       lowercase: true
     },
-    categories: [{ type: ObjectId, ref: 'Category' }],
+    categories: {
+      type: [{ type: ObjectId, ref: 'Category' }],
+      validate: [arrayMinLength, '{PATH} needs at least one entry']
+    },
     ingredients: [{ type: String, trim: true, lowercase: true, maxlength: 30 }],
     steps: {
       type: [stepSchema],
-      validate: [arrayMinLength, '{PATH} exceeds the limit of 10']
+      validate: [arrayMinLength, '{PATH} needs at least one entry']
     },
     likes: {
       type: Number,
