@@ -5,6 +5,10 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema;
 
+const arrayMinLength = val => {
+  return val.length > 0;
+};
+
 const stepSchema = new mongoose.Schema({
   stepTitle: {
     type: String,
@@ -17,10 +21,10 @@ const stepSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
-  tip: {
+  stepDescriptions: {
     type: String,
     trim: true,
-    maxlength: 60
+    maxlength: 1000
   }
 });
 
@@ -70,8 +74,4 @@ const recipeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const arrayMinLength = val => {
-  return val.length > 0;
-};
-
-module.exports = mongoose.module('Recipe', recipeSchema);
+module.exports = mongoose.model('Recipe', recipeSchema);

@@ -15,5 +15,11 @@ module.exports.recipeCreateValidator = [
     .withMessage('Length should not exceeds 30'),
   check('steps')
     .isArray({ min: 1 })
-    .withMessage('Should have at least one step')
+    .withMessage('Should have at least one step'),
+  check('steps.*.stepTitle')
+    .isLength({ min: 3, max: 60 })
+    .withMessage('Each step title should be within 3 and 60'),
+  check('steps.*.stepDescriptions')
+    .isLength({ max: 1000 })
+    .withMessage('Step description should be less than 1000')
 ];
