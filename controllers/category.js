@@ -3,6 +3,7 @@
 */
 const Category = require('../models/category');
 
+// create
 module.exports.createCategory = async (req, res) => {
   try {
     const { name } = req.body;
@@ -19,6 +20,7 @@ module.exports.createCategory = async (req, res) => {
   }
 };
 
+// list
 module.exports.listCategory = async (req, res) => {
   try {
     const list = await Category.find({});
@@ -31,10 +33,16 @@ module.exports.listCategory = async (req, res) => {
   }
 };
 
+// delete
 module.exports.deleteCategory = async (req, res) => {
   try {
     const { name } = req.body;
-    await Category.findOneAndDelete({ name });
+    const response = await Category.findOneAndDelete({ name });
+    // does not exist
+    if (!response)
+      return res.status(404).json({
+        error: 'Category you are trying to delete does not exist'
+      });
     return res.status(200).json({
       message: 'Category delete successfully'
     });
@@ -46,6 +54,7 @@ module.exports.deleteCategory = async (req, res) => {
   }
 };
 
+// update
 module.exports.updateCategory = async (req, res) => {
   try {
     const { name, oldName } = req.body;
@@ -53,6 +62,7 @@ module.exports.updateCategory = async (req, res) => {
       { name: oldName },
       { $set: { name: name } }
     );
+    // does not exist
     if (!response)
       return res.status(404).json({
         error: 'Category you are trying to update does not exist'

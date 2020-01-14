@@ -1,8 +1,12 @@
 /*
   Auth route for handling all auth related requests
 */
+
+// express
 const express = require('express');
 const router = express.Router();
+
+// middlewares controllers
 const {
   signUp,
   signIn,

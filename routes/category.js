@@ -1,5 +1,12 @@
+/*
+  Category related routes
+*/
+
+// express
 const express = require('express');
 const router = express.Router();
+
+// middlewares and controllers
 const { runValidation } = require('../validators');
 const {
   categoryCreateValidator,
@@ -14,6 +21,7 @@ const {
   updateCategory
 } = require('../controllers/category');
 
+// routes
 router.post(
   '/category',
   categoryCreateValidator,
@@ -22,7 +30,6 @@ router.post(
   adminMiddleware,
   createCategory
 );
-
 router.get('/categories', listCategory);
 router.delete(
   '/category',
@@ -32,7 +39,6 @@ router.delete(
   adminMiddleware,
   deleteCategory
 );
-
 router.put(
   '/category',
   categoryUpdateValidator,

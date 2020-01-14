@@ -2,9 +2,8 @@ const { check } = require('express-validator');
 
 module.exports.categoryCreateValidator = [
   check('name')
-    .not()
-    .isEmpty()
-    .withMessage('Category name must be specified')
+    .isLength({ min: 3, max: 50 })
+    .withMessage('Category name is either too long or too short')
 ];
 
 module.exports.categoryDeleteValidator = [
@@ -16,9 +15,8 @@ module.exports.categoryDeleteValidator = [
 
 module.exports.categoryUpdateValidator = [
   check('name')
-    .not()
-    .isEmpty()
-    .withMessage('Category name must be specified'),
+    .isLength({ min: 3, max: 50 })
+    .withMessage('Category name is either too long or too short'),
   check('oldName')
     .not()
     .isEmpty()
