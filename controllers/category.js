@@ -45,3 +45,25 @@ module.exports.deleteCategory = async (req, res) => {
     });
   }
 };
+
+module.exports.updateCategory = async (req, res) => {
+  try {
+    const { name, oldName } = req.body;
+    const response = await Category.findOneAndUpdate(
+      { name: oldName },
+      { $set: { name: name } }
+    );
+    if (!response)
+      return res.status(404).json({
+        error: 'Category you are trying to update does not exist'
+      });
+    return res.status(200).json({
+      message: 'Category updated successfully'
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong'
+    });
+  }
+};

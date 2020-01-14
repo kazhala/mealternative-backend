@@ -3,13 +3,15 @@ const router = express.Router();
 const { runValidation } = require('../validators');
 const {
   categoryCreateValidator,
-  categoryDeleteValidator
+  categoryDeleteValidator,
+  categoryUpdateValidator
 } = require('../validators/category');
 const { requireSignIn, adminMiddleware } = require('../controllers/auth');
 const {
   createCategory,
   listCategory,
-  deleteCategory
+  deleteCategory,
+  updateCategory
 } = require('../controllers/category');
 
 router.post(
@@ -29,6 +31,15 @@ router.delete(
   requireSignIn,
   adminMiddleware,
   deleteCategory
+);
+
+router.put(
+  '/category',
+  categoryUpdateValidator,
+  runValidation,
+  requireSignIn,
+  adminMiddleware,
+  updateCategory
 );
 
 module.exports = router;
