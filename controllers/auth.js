@@ -265,5 +265,29 @@ module.exports.adminMiddleware = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
+
+// check if user exists
+module.exports.authMiddleware = async (req, res, next) => {
+  const userId = req.user._id;
+  try {
+    const resUser = await User.findOne({ _id: userId });
+    if (resUser) {
+      req.profile = resUser;
+      next();
+    } else {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
   }
 };
