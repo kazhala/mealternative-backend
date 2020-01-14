@@ -18,3 +18,30 @@ module.exports.createCategory = async (req, res) => {
     });
   }
 };
+
+module.exports.listCategory = async (req, res) => {
+  try {
+    const list = await Category.find({});
+    return res.status(200).json(list);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: 'Something went wrong'
+    });
+  }
+};
+
+module.exports.deleteCategory = async (req, res) => {
+  try {
+    const { name } = req.body;
+    await Category.findOneAndDelete({ name });
+    return res.status(200).json({
+      message: 'Category delete successfully'
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: 'Something went wrong'
+    });
+  }
+};
