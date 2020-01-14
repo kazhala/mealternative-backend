@@ -8,6 +8,7 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
+const expressJWT = require('express-jwt');
 
 // set sendGrid api key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -242,5 +243,27 @@ module.exports.resetPassword = async (req, res) => {
     res.status(422).json({
       error: 'Token is invalid, please try again'
     });
+  }
+};
+
+// expressJWT package to validate token and append user id to req.body
+module.exports.requireSignIn = expressJWT({
+  secret: process.env.JWT_SECRET
+});
+
+// check if user is admin
+module.exports.adminMiddleware = async (req, res, next) => {
+  const userId = req.user._id;
+  try {
+    const resUser = await User.findOne({ _id: userId });
+    if (!resUser) return res.status(404).json({ error: 'User not found' });
+    if (resUser.role === 1) {
+      req.profile = resUser;
+      next();
+    } else {
+      return res.status(401).json({ error: 'Admin resource. Access denied' });
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
