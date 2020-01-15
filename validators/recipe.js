@@ -50,3 +50,10 @@ module.exports.recipeUpdateValidator = [
     .isLength({ max: 1000 })
     .withMessage('Step description should be less than 1000')
 ];
+
+module.exports.recipeLikeValidator = [
+  check('type')
+    .notEmpty()
+    .isIn([1, -1])
+    .withMessage('Please specify 1 or -1 for increment or decrement')
+];

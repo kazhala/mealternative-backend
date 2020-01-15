@@ -117,3 +117,22 @@ module.exports.updateRecipe = async (req, res) => {
     });
   }
 };
+
+module.exports.updateLikes = async (req, res) => {
+  const recipeId = req.params.recipeId;
+  const { type } = req.body;
+  try {
+    await Recipe.findOneAndUpdate(
+      { _id: recipeId },
+      { $inc: { likes: Number(type) } }
+    );
+    return res.status(200).json({
+      message: 'Success increment likes'
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
