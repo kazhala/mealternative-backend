@@ -14,6 +14,7 @@ const { connectDb } = require('./helpers/dbHelpers');
 const authRoutes = require('./routes/auth');
 const categoryRoutes = require('./routes/category');
 const recipeRoutes = require('./routes/recipe');
+const userRoutes = require('./routes/user');
 
 // initialise main app running express
 const app = express();
@@ -34,6 +35,7 @@ app.use(cors());
 app.use('/api', authRoutes);
 app.use('/api', categoryRoutes);
 app.use('/api', recipeRoutes);
+app.use('/api', userRoutes);
 
 // port for running the apis
 const port = process.env.PORT;
