@@ -6,12 +6,16 @@
 const express = require('express');
 const router = express.Router();
 const { runValidation } = require('../validators');
-const { recipeCreateValidator } = require('../validators/recipe');
+const {
+  recipeCreateValidator,
+  recipeUpdateValidator
+} = require('../validators/recipe');
 const { requireSignIn, authMiddleware } = require('../controllers/auth');
 const {
   createRecipe,
   readRecipe,
-  deleteRecipe
+  deleteRecipe,
+  updateRecipe
 } = require('../controllers/recipe');
 
 router.post(
@@ -24,5 +28,13 @@ router.post(
 );
 router.get('/recipe/:recipeId', readRecipe);
 router.delete('/recipe/:recipeId', requireSignIn, authMiddleware, deleteRecipe);
+router.put(
+  '/recipe/:recipeId',
+  recipeUpdateValidator,
+  runValidation,
+  requireSignIn,
+  authMiddleware,
+  updateRecipe
+);
 
 module.exports = router;

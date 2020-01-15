@@ -76,3 +76,44 @@ module.exports.deleteRecipe = async (req, res) => {
     });
   }
 };
+
+module.exports.updateRecipe = async (req, res) => {
+  const recipeId = req.params.recipeId;
+  const userId = req.profile._id;
+  const {
+    title,
+    description,
+    thumbImageUrl,
+    categories,
+    ingredients,
+    steps
+  } = req.body;
+  const newRecipe = {
+    title,
+    description,
+    thumbImageUrl,
+    categories,
+    ingredients,
+    steps,
+    postedBy: userId
+  };
+  try {
+    const response = await Recipe.findOneAndUpdate(
+      { _id: recipeId, postedBy: userId },
+      newRecipe,
+      { new: true }
+    );
+    if (response) {
+      return res.status(200).json(response);
+    } else {
+      return res.status(404).json({
+        error: 'Recipe not found'
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
