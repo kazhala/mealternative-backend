@@ -2,6 +2,7 @@
   The user schema, used for signup process
 */
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -36,6 +37,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
     select: false
+  },
+  stars: {
+    recipe: [{ type: ObjectId, ref: 'Recipe' }]
   }
 });
 
