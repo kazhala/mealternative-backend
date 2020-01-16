@@ -1,9 +1,12 @@
 /*
   recipe related controllers
 */
+
+// models
 const Recipe = require('../models/recipe');
 const User = require('../models/user');
 
+// create recipe
 module.exports.createRecipe = async (req, res) => {
   const {
     title,
@@ -14,6 +17,7 @@ module.exports.createRecipe = async (req, res) => {
     steps
   } = req.body;
   const userId = req.profile._id;
+  // create mongoose object
   const recipe = new Recipe({
     title,
     description,
@@ -23,11 +27,14 @@ module.exports.createRecipe = async (req, res) => {
     steps,
     postedBy: userId
   });
+
   try {
+    // push the recipe id to user.posts
     await User.findOneAndUpdate(
       { _id: userId },
       { $push: { 'posts.recipe': recipe._id } }
     );
+    // save the record
     await recipe.save();
     return res.status(200).json({
       message: 'Recipe created successfully'
@@ -40,6 +47,7 @@ module.exports.createRecipe = async (req, res) => {
   }
 };
 
+// retrieve a recipe
 module.exports.readRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
   try {
@@ -59,10 +67,12 @@ module.exports.readRecipe = async (req, res) => {
   }
 };
 
+// delete recipe
 module.exports.deleteRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
   const userId = req.profile._id;
   try {
+    // match both to remove (needs to belong to the owner)
     const response = await Recipe.findOneAndRemove({
       _id: recipeId,
       postedBy: userId
@@ -82,6 +92,7 @@ module.exports.deleteRecipe = async (req, res) => {
   }
 };
 
+// update recipe
 module.exports.updateRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
   const userId = req.profile._id;
@@ -93,6 +104,7 @@ module.exports.updateRecipe = async (req, res) => {
     ingredients,
     steps
   } = req.body;
+  // create the newRecipe params
   const newRecipe = {
     title,
     description,
@@ -102,7 +114,9 @@ module.exports.updateRecipe = async (req, res) => {
     steps,
     postedBy: userId
   };
+
   try {
+    // update the document and return the new one
     const response = await Recipe.findOneAndUpdate(
       { _id: recipeId, postedBy: userId },
       newRecipe,
@@ -123,8 +137,10 @@ module.exports.updateRecipe = async (req, res) => {
   }
 };
 
+// increment/decrement the likes
 module.exports.updateLikes = async (req, res) => {
   const recipeId = req.params.recipeId;
+  // type = [1, -1]
   const { type } = req.body;
   try {
     await Recipe.findOneAndUpdate(
@@ -142,10 +158,13 @@ module.exports.updateLikes = async (req, res) => {
   }
 };
 
+// list recipes based on user search
+// TODO: add pagination
 module.exports.listSearch = async (req, res) => {
   const { search } = req.query;
   if (search) {
     try {
+      // find base on title or description
       const response = await Recipe.find({
         $or: [
           { title: { $regex: search, $options: 'i' } },
@@ -160,12 +179,15 @@ module.exports.listSearch = async (req, res) => {
       });
     }
   } else {
-    return res.status(500).json({
+    // if no search, return error, clientSide should prevent it
+    return res.status(400).json({
       error: 'Please enter a search string'
     });
   }
 };
 
+// list all recipes based on userId
+// TODO: add pagination
 module.exports.listByUser = async (req, res) => {
   const userId = req.params.userId;
   try {

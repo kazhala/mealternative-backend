@@ -79,9 +79,11 @@ module.exports.updateCategory = async (req, res) => {
   }
 };
 
+// list all recipes within category
 module.exports.listRecipesByCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
   try {
+    // mongoose is smart enough to find in array
     const response = await Recipe.find({ categories: categoryId });
     return res.status(200).json(response);
   } catch (err) {

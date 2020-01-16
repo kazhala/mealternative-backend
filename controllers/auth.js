@@ -87,6 +87,8 @@ module.exports.signUp = async (req, res) => {
   }
 };
 
+// presignin to check if it comes from signup-autosignin or normal signin
+// middleware
 module.exports.preSignIn = async (req, res, next) => {
   const { token, email, password } = req.body;
   console.log(token);
@@ -110,6 +112,7 @@ module.exports.preSignIn = async (req, res, next) => {
 
 // sign in user
 module.exports.signIn = async (req, res) => {
+  // TODO: remove below temp update
   // await User.updateMany({}, { posts: { recipe: [] } });
   const { email, password } = req.body;
   try {

@@ -23,6 +23,7 @@ const {
 } = require('../controllers/category');
 
 // routes
+// CRUD
 router.post(
   '/category',
   categoryCreateValidator,
@@ -49,6 +50,7 @@ router.put(
   updateCategory
 );
 
+// list all recipes in a category
 router.get('/category/:categoryId/recipes', listRecipesByCategory);
 
 module.exports = router;
