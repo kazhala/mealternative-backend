@@ -136,3 +136,27 @@ module.exports.updateLikes = async (req, res) => {
     });
   }
 };
+
+module.exports.listSearch = async (req, res) => {
+  const { search } = req.query;
+  if (search) {
+    try {
+      const response = await Recipe.find({
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ]
+      }).select('-steps -ingredients');
+      return res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        error: 'Something went wrong..'
+      });
+    }
+  } else {
+    return res.status(500).json({
+      error: 'Please enter a search string'
+    });
+  }
+};
