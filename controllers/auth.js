@@ -110,6 +110,7 @@ module.exports.preSignIn = async (req, res, next) => {
 
 // sign in user
 module.exports.signIn = async (req, res) => {
+  // await User.updateMany({}, { posts: { recipe: [] } });
   const { email, password } = req.body;
   try {
     // get user, get password (default won't return password)

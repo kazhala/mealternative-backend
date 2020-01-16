@@ -2,6 +2,7 @@
   recipe related controllers
 */
 const Recipe = require('../models/recipe');
+const User = require('../models/user');
 
 module.exports.createRecipe = async (req, res) => {
   const {
@@ -23,6 +24,10 @@ module.exports.createRecipe = async (req, res) => {
     postedBy: userId
   });
   try {
+    await User.findOneAndUpdate(
+      { _id: userId },
+      { $push: { 'posts.recipe': recipe._id } }
+    );
     await recipe.save();
     return res.status(200).json({
       message: 'Recipe created successfully'
