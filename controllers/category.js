@@ -2,6 +2,7 @@
   Category controllers
 */
 const Category = require('../models/category');
+const Recipe = require('../models/recipe');
 
 // create
 module.exports.createCategory = async (req, res) => {
@@ -70,6 +71,19 @@ module.exports.updateCategory = async (req, res) => {
     return res.status(200).json({
       message: 'Category updated successfully'
     });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong'
+    });
+  }
+};
+
+module.exports.listRecipesByCategory = async (req, res) => {
+  const categoryId = req.params.categoryId;
+  try {
+    const response = await Recipe.find({ categories: categoryId });
+    return res.status(200).json(response);
   } catch (err) {
     console.log(err);
     return res.status(500).json({

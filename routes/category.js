@@ -18,7 +18,8 @@ const {
   createCategory,
   listCategory,
   deleteCategory,
-  updateCategory
+  updateCategory,
+  listRecipesByCategory
 } = require('../controllers/category');
 
 // routes
@@ -47,5 +48,7 @@ router.put(
   adminMiddleware,
   updateCategory
 );
+
+router.get('/category/:categoryId/recipes', listRecipesByCategory);
 
 module.exports = router;
