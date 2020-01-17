@@ -161,11 +161,15 @@ module.exports.updateLikes = async (req, res) => {
 // list recipes based on user search
 module.exports.listSearch = async (req, res) => {
   const { query } = req;
+  // default page size
   const size = query.size ? Number(query.size) : 10;
   const search = query.search;
   const page = query.page ? Number(query.page) : 1;
+  // make sure to pass desc with '-' append to the front
   const orderBy = query.orderBy ? query.orderBy : '-likes';
+  // skip how many entries
   const skip = (page - 1) * size;
+
   if (search) {
     try {
       // find base on title or description
@@ -192,6 +196,54 @@ module.exports.listSearch = async (req, res) => {
     // if no search, return error, clientSide should prevent it
     return res.status(400).json({
       error: 'Please enter a search string'
+    });
+  }
+};
+
+// list recipes when user enter recipe discovery page
+module.exports.listRandomRecipe = async (req, res) => {
+  const { query } = req;
+  try {
+    const totalEntries = await Recipe.countDocuments({});
+    const size = query.size ? Number(query.size) : 10;
+    const totalPages = Math.floor(totalEntries / size);
+    const page = query.page
+      ? Number(query.page)
+      : Math.ceil(Math.random() * totalPages);
+    // skip how many entries
+    const skip = (page - 1) * size;
+    const sortNum = query.randNum
+      ? query.randNum
+      : Math.floor(Math.random() * 14);
+    const sortArr = [
+      '_id',
+      'likes',
+      'stars',
+      'updatedAt',
+      'createdAt',
+      'title',
+      'description',
+      '-_id',
+      '-likes',
+      '-stars',
+      '-updatedAt',
+      '-createdAt',
+      '-title',
+      '-description'
+    ];
+
+    const response = await Recipe.find({})
+      .populate('categories', 'name')
+      .populate('postedBy', 'username')
+      .select('-ingredients')
+      .sort(sortArr[sortNum])
+      .limit(size)
+      .skip(skip);
+    return res.status(200).json({ response, sortNum, page });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
     });
   }
 };
