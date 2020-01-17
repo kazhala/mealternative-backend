@@ -86,20 +86,38 @@ module.exports.listRecipesByCategory = async (req, res) => {
   const size = req.query.size ? Number(req.query.size) : 10;
   const page = req.query.page ? Number(req.query.page) : 1;
   const skip = (page - 1) * size;
+  const search = req.query.search;
   try {
-    // mongoose is smart enough to find in array
-    const response = await Recipe.find({ categories: categoryId })
-      .populate('postedBy', 'username')
-      .populate('categories', 'name')
-      .select('-ingredients')
-      .sort(orderBy)
-      .limit(size)
-      .skip(skip);
-    return res.status(200).json(response);
+    if (!search) {
+      // mongoose is smart enough to find in array
+      const response = await Recipe.find({ categories: categoryId })
+        .populate('postedBy', 'username')
+        .populate('categories', 'name')
+        .select('-ingredients')
+        .sort(orderBy)
+        .limit(size)
+        .skip(skip);
+      return res.status(200).json(response);
+    } else {
+      const response = await Recipe.find({
+        categories: categoryId,
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ]
+      })
+        .populate('categories', 'name')
+        .populate('postedBy', 'username')
+        .select('-ingredients')
+        .sort(orderBy)
+        .limit(size)
+        .skip(skip);
+      return res.status(200).json(response);
+    }
   } catch (err) {
     console.log(err);
     return res.status(500).json({
-      error: 'Something went wrong'
+      error: 'Something went wrong..'
     });
   }
 };
