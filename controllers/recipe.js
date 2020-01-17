@@ -204,16 +204,20 @@ module.exports.listSearch = async (req, res) => {
 module.exports.listRandomRecipe = async (req, res) => {
   const { query } = req;
   try {
+    // get total entries to calculate total pages
     const totalEntries = await Recipe.countDocuments({});
+    // default size 10
     const size = query.size ? Number(query.size) : 10;
+    // calculate total page
     const totalPages = Math.floor(totalEntries / size);
+    // generate random page if first query
     const page = query.page
       ? Number(query.page)
       : Math.ceil(Math.random() * totalPages);
     // skip how many entries
     const skip = (page - 1) * size;
-    const sortNum = query.randNum
-      ? query.randNum
+    const orderNum = query.orderNum
+      ? query.orderNum
       : Math.floor(Math.random() * 14);
     const sortArr = [
       '_id',
@@ -236,10 +240,10 @@ module.exports.listRandomRecipe = async (req, res) => {
       .populate('categories', 'name')
       .populate('postedBy', 'username')
       .select('-ingredients')
-      .sort(sortArr[sortNum])
+      .sort(sortArr[orderNum])
       .limit(size)
       .skip(skip);
-    return res.status(200).json({ response, sortNum, page });
+    return res.status(200).json({ response, orderNum, page });
   } catch (err) {
     console.log(err);
     return res.status(500).json({
