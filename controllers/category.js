@@ -92,7 +92,6 @@ module.exports.listRecipesByCategory = async (req, res) => {
       // mongoose is smart enough to find in array
       const response = await Recipe.find({ categories: categoryId })
         .populate('postedBy', 'username')
-        .populate('categories', 'name')
         .select('-ingredients')
         .sort(orderBy)
         .limit(size)
