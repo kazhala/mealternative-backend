@@ -159,9 +159,13 @@ module.exports.updateLikes = async (req, res) => {
 };
 
 // list recipes based on user search
-// TODO: add pagination
 module.exports.listSearch = async (req, res) => {
-  const { search } = req.query;
+  const { query } = req;
+  const size = query.size ? Number(query.size) : 10;
+  const search = query.search;
+  const page = query.page ? Number(query.page) : 1;
+  const orderBy = query.orderBy ? query.orderBy : '-likes';
+  const skip = (page - 1) * size;
   if (search) {
     try {
       // find base on title or description
@@ -170,7 +174,13 @@ module.exports.listSearch = async (req, res) => {
           { title: { $regex: search, $options: 'i' } },
           { description: { $regex: search, $options: 'i' } }
         ]
-      }).select('-ingredients');
+      })
+        .populate('categories', 'name')
+        .populate('postedBy', 'username')
+        .select('-ingredients')
+        .sort(orderBy)
+        .limit(size)
+        .skip(skip);
       return res.status(200).json(response);
     } catch (err) {
       console.log(err);
