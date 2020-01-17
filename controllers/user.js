@@ -4,6 +4,7 @@
 
 // model
 const User = require('../models/user');
+const Recipe = require('../models/recipe');
 // package
 const mongoose = require('mongoose');
 
@@ -29,5 +30,22 @@ module.exports.starRecipe = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+  }
+};
+
+// list all recipes based on userId
+// TODO: add pagination
+module.exports.listUserRecipe = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const response = await Recipe.find({ postedBy: userId }).select(
+      '-ingredients'
+    );
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
   }
 };

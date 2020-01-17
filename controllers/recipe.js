@@ -185,20 +185,3 @@ module.exports.listSearch = async (req, res) => {
     });
   }
 };
-
-// list all recipes based on userId
-// TODO: add pagination
-module.exports.listByUser = async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    const response = await Recipe.find({ postedBy: userId }).select(
-      '-ingredients'
-    );
-    return res.status(200).json(response);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: 'Something went wrong..'
-    });
-  }
-};

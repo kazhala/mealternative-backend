@@ -8,7 +8,7 @@ const router = express.Router();
 
 // middlewars
 const { requireSignIn, authMiddleware } = require('../controllers/auth');
-const { starRecipe } = require('../controllers/user');
+const { starRecipe, listUserRecipe } = require('../controllers/user');
 
 // routes
 router.put(
@@ -17,6 +17,8 @@ router.put(
   authMiddleware,
   starRecipe
 );
+
+router.get('/user/:userId/recipes', listUserRecipe);
 
 // update detail
 // TODO

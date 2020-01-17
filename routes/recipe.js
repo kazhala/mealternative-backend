@@ -20,8 +20,7 @@ const {
   deleteRecipe,
   updateRecipe,
   updateLikes,
-  listSearch,
-  listByUser
+  listSearch
 } = require('../controllers/recipe');
 
 // recipe crud
@@ -44,9 +43,8 @@ router.put(
   updateRecipe
 );
 
-// recipe search
+// recipe list/search
 router.get('/recipes/search', listSearch);
-router.get('/:userId/recipes', listByUser);
 
 // recipe likes
 router.put(
