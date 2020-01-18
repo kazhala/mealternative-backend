@@ -216,7 +216,7 @@ module.exports.listRandomRecipe = async (req, res) => {
       : Math.ceil(Math.random() * totalPages);
     // skip how many entries
     const skip = (page - 1) * size;
-    const orderNum = query.orderNum
+    let orderNum = query.orderNum
       ? query.orderNum
       : Math.floor(Math.random() * 14);
     const sortArr = [
@@ -235,6 +235,9 @@ module.exports.listRandomRecipe = async (req, res) => {
       '-title',
       '-description'
     ];
+    if (query.orderBy) {
+      orderNum = sortArr.indexOf(query.orderBy);
+    }
 
     const response = await Recipe.find({})
       .populate('categories', 'name')
