@@ -29,7 +29,7 @@ module.exports.listCategory = async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.status(500).json({
-      message: 'Something went wrong'
+      error: 'Something went wrong'
     });
   }
 };
@@ -50,7 +50,7 @@ module.exports.deleteCategory = async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.status(500).json({
-      message: 'Something went wrong'
+      error: 'Something went wrong'
     });
   }
 };
