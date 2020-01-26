@@ -68,6 +68,7 @@ module.exports.readRecipe = async (req, res) => {
 };
 
 // delete recipe
+// TODO: delete entry in user table
 module.exports.deleteRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
   const userId = req.profile._id;
