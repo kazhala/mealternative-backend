@@ -12,7 +12,7 @@ const { bookmarkRecipe, listUserRecipe } = require('../controllers/user');
 
 // routes
 router.put(
-  '/user/bookmarks/recipe/:recipeId',
+  '/user/bookmark/recipe/:recipeId',
   requireSignIn,
   authMiddleware,
   bookmarkRecipe

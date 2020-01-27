@@ -5,26 +5,31 @@
 // model
 const User = require('../models/user');
 const Recipe = require('../models/recipe');
-// package
-const mongoose = require('mongoose');
+const Bookmark = require('../models/bookmark');
 
 // bookmark a recipe
 module.exports.bookmarkRecipe = async (req, res) => {
-  // convert to a mongoose Id for compare
-  // TODO: may remove it
-  const recipeId = mongoose.Types.ObjectId(req.params.recipeId);
+  const recipeId = req.params.recipeId;
   const userId = req.profile._id;
   try {
-    const user = await User.findOne({ _id: userId });
-    const idIndex = user.bookmarks.recipe.indexOf(recipeId);
-    // if not exists, push, if exists, pop
-    if (idIndex === -1) {
-      user.bookmarks.recipe.push(recipeId);
+    let bookmarked = await Bookmark.findOne({ user: userId, recipe: recipeId });
+    if (bookmarked) {
+      await bookmarked.remove();
+      await Recipe.findOneAndUpdate(
+        { _id: recipeId },
+        { $inc: { bookmarks: -1 } }
+      );
     } else {
-      user.bookmarks.recipe.splice(idIndex, 1);
+      bookmarked = new Bookmark({
+        user: userId,
+        recipe: recipeId
+      });
+      await bookmarked.save();
+      await Recipe.findOneAndUpdate(
+        { _id: recipeId },
+        { $inc: { bookmarks: 1 } }
+      );
     }
-    // save the user
-    await user.save();
     return res.status(200).json({
       message: 'Success bookmark'
     });

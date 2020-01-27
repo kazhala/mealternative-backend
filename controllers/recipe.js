@@ -144,15 +144,15 @@ module.exports.updateLikes = async (req, res) => {
     });
     console.log(liked);
     if (liked) {
-      await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: -1 } });
       await liked.remove();
+      await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: -1 } });
     } else {
-      await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: 1 } });
       liked = new Like({
         user: userId,
         recipe: recipeId
       });
       await liked.save();
+      await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: 1 } });
     }
     return res.status(200).json({
       message: 'Success increment likes'
