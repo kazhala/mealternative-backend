@@ -5,6 +5,8 @@
 // models
 const Recipe = require('../models/recipe');
 const User = require('../models/user');
+const Like = require('../models/like');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 // create recipe
 module.exports.createRecipe = async (req, res) => {
@@ -144,13 +146,25 @@ module.exports.updateRecipe = async (req, res) => {
 // increment/decrement the likes
 module.exports.updateLikes = async (req, res) => {
   const recipeId = req.params.recipeId;
-  // type = [1, -1]
-  const { type } = req.body;
+  const userId = req.profile._id;
+  console.log(userId, recipeId);
   try {
-    await Recipe.findOneAndUpdate(
-      { _id: recipeId },
-      { $inc: { likes: Number(type) } }
-    );
+    let liked = await Like.findOne({
+      user: userId,
+      recipe: recipeId
+    });
+    console.log(liked);
+    if (liked) {
+      await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: -1 } });
+      await liked.remove();
+    } else {
+      await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: 1 } });
+      liked = new Like({
+        user: userId,
+        recipe: recipeId
+      });
+      await liked.save();
+    }
     return res.status(200).json({
       message: 'Success increment likes'
     });

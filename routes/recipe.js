@@ -10,8 +10,7 @@ const router = express.Router();
 const { runValidation } = require('../validators');
 const {
   recipeCreateValidator,
-  recipeUpdateValidator,
-  recipeLikeValidator
+  recipeUpdateValidator
 } = require('../validators/recipe');
 const { requireSignIn, authMiddleware } = require('../controllers/auth');
 const {
@@ -51,8 +50,8 @@ router.get('/recipes/list', listRandomRecipe);
 // recipe likes
 router.put(
   '/recipe/likes/:recipeId',
-  recipeLikeValidator,
-  runValidation,
+  requireSignIn,
+  authMiddleware,
   updateLikes
 );
 
