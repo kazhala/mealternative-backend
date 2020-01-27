@@ -62,7 +62,11 @@ const recipeSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
-    stars: {
+    bookmarks: {
+      type: Number,
+      default: 0
+    },
+    rating: {
       type: Number,
       default: 0
     },

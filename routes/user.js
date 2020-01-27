@@ -8,14 +8,14 @@ const router = express.Router();
 
 // middlewars
 const { requireSignIn, authMiddleware } = require('../controllers/auth');
-const { starRecipe, listUserRecipe } = require('../controllers/user');
+const { bookmarkRecipe, listUserRecipe } = require('../controllers/user');
 
 // routes
 router.put(
-  '/user/star/recipe/:recipeId',
+  '/user/bookmarks/recipe/:recipeId',
   requireSignIn,
   authMiddleware,
-  starRecipe
+  bookmarkRecipe
 );
 
 router.get('/user/:userId/recipes', listUserRecipe);
