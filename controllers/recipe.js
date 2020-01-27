@@ -213,13 +213,14 @@ module.exports.listRandomRecipe = async (req, res) => {
     // default size 10
     const size = query.size ? Number(query.size) : 10;
     // calculate total page
-    const totalPages = Math.floor(totalEntries / size);
+    const totalPages = Math.ceil(totalEntries / size);
     // generate random page if first query
     const page = query.page
       ? Number(query.page)
       : Math.ceil(Math.random() * totalPages);
     // skip how many entries
-    const skip = (page - 1) * size;
+    console.log(page);
+    const skip = page > 0 ? (page - 1) * size : 0;
     let orderNum = query.orderNum
       ? query.orderNum
       : Math.floor(Math.random() * 14);
