@@ -40,9 +40,6 @@ const userSchema = new mongoose.Schema({
   },
   stars: {
     recipe: [{ type: ObjectId, ref: 'Recipe' }]
-  },
-  posts: {
-    recipe: [{ type: ObjectId, ref: 'Recipe' }]
   }
 });
 

@@ -4,7 +4,6 @@
 
 // models
 const Recipe = require('../models/recipe');
-const User = require('../models/user');
 const Like = require('../models/like');
 
 // create recipe
@@ -30,11 +29,6 @@ module.exports.createRecipe = async (req, res) => {
   });
 
   try {
-    // push the recipe id to user.posts
-    await User.findOneAndUpdate(
-      { _id: userId },
-      { $push: { 'posts.recipe': recipe._id } }
-    );
     // save the record
     await recipe.save();
     return res.status(200).json({
@@ -73,10 +67,6 @@ module.exports.deleteRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
   const userId = req.profile._id;
   try {
-    await User.findOneAndUpdate(
-      { _id: userId },
-      { $pull: { 'posts.recipe': recipeId } }
-    );
     // match both to remove (needs to belong to the owner)
     const response = await Recipe.findOneAndRemove({
       _id: recipeId,
