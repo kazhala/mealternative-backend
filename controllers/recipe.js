@@ -68,11 +68,14 @@ module.exports.readRecipe = async (req, res) => {
 };
 
 // delete recipe
-// TODO: delete entry in user table
 module.exports.deleteRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
   const userId = req.profile._id;
   try {
+    await User.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { 'posts.recipe': recipeId } }
+    );
     // match both to remove (needs to belong to the owner)
     const response = await Recipe.findOneAndRemove({
       _id: recipeId,
