@@ -224,7 +224,7 @@ module.exports.listRandomRecipe = async (req, res) => {
     // skip how many entries
     console.log(page);
     const skip = page > 0 ? (page - 1) * size : 0;
-    let orderNum = Math.floor(Math.random() * 14);
+    let orderNum = Math.floor(Math.random() * 13);
     const sortArr = [
       '_id',
       'likes',
@@ -235,9 +235,6 @@ module.exports.listRandomRecipe = async (req, res) => {
       'title',
       'description',
       '-_id',
-      '-likes',
-      '-bookmarks',
-      '-rating',
       '-updatedAt',
       '-createdAt',
       '-title',
@@ -257,7 +254,7 @@ module.exports.listRandomRecipe = async (req, res) => {
       .skip(skip);
     return res
       .status(200)
-      .json({ response, sortOption: sortArr[orderNum], page });
+      .json({ response, sortOption: sortArr[orderNum], page, totalPages });
   } catch (err) {
     console.log(err);
     return res.status(500).json({
