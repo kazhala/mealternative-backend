@@ -37,9 +37,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
     select: false
-  },
-  stars: {
-    recipe: [{ type: ObjectId, ref: 'Recipe' }]
   }
 });
 
