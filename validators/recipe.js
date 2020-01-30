@@ -50,3 +50,9 @@ module.exports.recipeUpdateValidator = [
     .isLength({ max: 1000 })
     .withMessage('Step description should be less than 1000')
 ];
+
+module.exports.recipeRatingValidator = [
+  check('rating')
+    .isNumeric()
+    .withMessage('Must enter a rating number')
+];

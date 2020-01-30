@@ -6,6 +6,7 @@
 const Recipe = require('../models/recipe');
 const Like = require('../models/like');
 const Bookmark = require('../models/bookmark');
+const Rating = require('../models/rating');
 
 // create recipe
 module.exports.createRecipe = async (req, res) => {
@@ -263,6 +264,47 @@ module.exports.listRandomRecipe = async (req, res) => {
     return res
       .status(200)
       .json({ response, sortOption: sortArr[orderNum], page, totalPages });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
+
+// update rating
+module.exports.updateRating = async (req, res) => {
+  const userId = req.profile._id;
+  const recipeId = req.params.recipeId;
+  const { rating } = req.body;
+
+  try {
+    const existingRate = await Rating.findOne({
+      user: userId,
+      recipe: recipeId
+    });
+    if (existingRate) {
+      existingRate.rating = rating;
+      await existingRate.save();
+    } else {
+      const newRating = new Rating({
+        user: userId,
+        recipe: recipeId,
+        rating
+      });
+      await newRating.save();
+    }
+    const allRatings = await Rating.find({ recipe: recipeId });
+
+    let totalRatings = 0;
+    allRatings.forEach(rateRecord => {
+      totalRatings = totalRatings + rateRecord.rating;
+    });
+    const averageRating = totalRatings / allRatings.length;
+    await Recipe.findOneAndUpdate({ _id: recipeId }, { rating: averageRating });
+    return res.status(200).json({
+      message: 'Success update rating'
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({

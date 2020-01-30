@@ -10,7 +10,8 @@ const router = express.Router();
 const { runValidation } = require('../validators');
 const {
   recipeCreateValidator,
-  recipeUpdateValidator
+  recipeUpdateValidator,
+  recipeRatingValidator
 } = require('../validators/recipe');
 const { requireSignIn, authMiddleware } = require('../controllers/auth');
 const {
@@ -20,7 +21,8 @@ const {
   updateRecipe,
   updateLikes,
   listSearch,
-  listRandomRecipe
+  listRandomRecipe,
+  updateRating
 } = require('../controllers/recipe');
 
 // recipe crud
@@ -53,6 +55,15 @@ router.put(
   requireSignIn,
   authMiddleware,
   updateLikes
+);
+
+router.put(
+  '/recipe/rating/:recipeId',
+  recipeRatingValidator,
+  runValidation,
+  requireSignIn,
+  authMiddleware,
+  updateRating
 );
 
 module.exports = router;
