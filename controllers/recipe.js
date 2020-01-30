@@ -218,9 +218,14 @@ module.exports.listRandomRecipe = async (req, res) => {
     // calculate total page
     const totalPages = Math.ceil(totalEntries / size);
     // generate random page if first query
-    const page = query.page
-      ? Number(query.page)
-      : Math.ceil(Math.random() * (totalPages - 1));
+    let page;
+    if (totalPages === 1) {
+      page = 1;
+    } else {
+      page = query.page
+        ? Number(query.page)
+        : Math.ceil(Math.random() * (totalPages - 1));
+    }
     // skip how many entries
     console.log(page);
     const skip = page > 0 ? (page - 1) * size : 0;
