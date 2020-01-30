@@ -77,6 +77,7 @@ module.exports.deleteRecipe = async (req, res) => {
     if (response) {
       await Bookmark.deleteMany({ recipe: recipeId });
       await Like.deleteMany({ recipe: recipeId });
+      await Rating.deleteMany({ recipe: recipeId });
       return res.status(200).json(response);
     } else {
       return res.status(404).json({
