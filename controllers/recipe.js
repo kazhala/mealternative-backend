@@ -5,6 +5,7 @@
 // models
 const Recipe = require('../models/recipe');
 const Like = require('../models/like');
+const Bookmark = require('../models/bookmark');
 
 // create recipe
 module.exports.createRecipe = async (req, res) => {
@@ -73,6 +74,8 @@ module.exports.deleteRecipe = async (req, res) => {
       postedBy: userId
     });
     if (response) {
+      await Bookmark.deleteMany({ recipe: recipeId });
+      await Like.deleteMany({ recipe: recipeId });
       return res.status(200).json(response);
     } else {
       return res.status(404).json({
