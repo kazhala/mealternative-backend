@@ -48,7 +48,9 @@ module.exports.createRecipe = async (req, res) => {
 module.exports.readRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
   try {
-    const recipe = await Recipe.findOne({ _id: recipeId });
+    const recipe = await Recipe.findOne({ _id: recipeId })
+      .populate('categories', 'name')
+      .populate('postedBy', 'username');
     if (recipe) {
       return res.status(200).json(recipe);
     } else {
