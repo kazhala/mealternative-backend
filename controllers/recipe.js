@@ -47,11 +47,25 @@ module.exports.createRecipe = async (req, res) => {
 // retrieve a recipe
 module.exports.readRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
+  const { userId } = req.query;
   try {
     const recipe = await Recipe.findOne({ _id: recipeId })
       .populate('categories', 'name')
       .populate('postedBy', 'username');
     if (recipe) {
+      if (userId) {
+        const liked = await Like.findOne({ user: userId, recipe: recipeId });
+        const booked = await Bookmark.findOne({
+          user: userId,
+          recipe: recipeId
+        });
+        const responseData = {
+          ...recipe._doc,
+          liked: Boolean(liked),
+          booked: Boolean(booked)
+        };
+        return res.status(200).json(responseData);
+      }
       return res.status(200).json(recipe);
     } else {
       return res.status(404).json({
