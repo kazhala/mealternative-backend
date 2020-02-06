@@ -77,3 +77,22 @@ module.exports.listUserRecipe = async (req, res) => {
     });
   }
 };
+
+// retrieve user details
+module.exports.readUser = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const user = await User.findOne({ _id: userId }).select('-role');
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+    return res.status(200).json(user);
+  } catch (err) {
+    console.log('Error', err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
