@@ -96,3 +96,18 @@ module.exports.readUser = async (req, res) => {
     });
   }
 };
+
+// retrieve user bookmarks
+module.exports.listUserBookmarks = async (req, res) => {
+  const userId = req.profile;
+  try {
+    const bookmarks = await Bookmark.find({ user: userId }).populate({
+      path: 'recipe',
+      select: 'thumbImageUrl likes bookmarks rating title description postedBy',
+      populate: { path: 'postedBy', select: 'username photoUrl' }
+    });
+    return res.status(200).json(bookmarks);
+  } catch (err) {
+    console.log('Error', err);
+  }
+};
