@@ -51,7 +51,7 @@ module.exports.readRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.findOne({ _id: recipeId })
       .populate('categories', 'name')
-      .populate('postedBy', 'username');
+      .populate('postedBy', 'username photoUrl');
     if (recipe) {
       if (userId) {
         const liked = await Like.findOne({ user: userId, recipe: recipeId });
@@ -208,7 +208,7 @@ module.exports.listSearch = async (req, res) => {
         ]
       })
         .populate('categories', 'name')
-        .populate('postedBy', 'username')
+        .populate('postedBy', 'username photoUrl')
         .select('-ingredients')
         .sort(orderBy)
         .limit(size)
@@ -271,7 +271,7 @@ module.exports.listRandomRecipe = async (req, res) => {
     }
 
     const response = await Recipe.find({})
-      .populate('postedBy', 'username')
+      .populate('postedBy', 'username photoUrl')
       .select('-ingredients')
       .select('-steps')
       .select('-categories')
