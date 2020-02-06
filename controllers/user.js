@@ -99,7 +99,7 @@ module.exports.readUser = async (req, res) => {
 
 // retrieve user bookmarks
 module.exports.listUserBookmarks = async (req, res) => {
-  const userId = req.profile;
+  const userId = req.profile._id;
   try {
     const bookmarks = await Bookmark.find({ user: userId }).populate({
       path: 'recipe',
@@ -109,5 +109,33 @@ module.exports.listUserBookmarks = async (req, res) => {
     return res.status(200).json(bookmarks);
   } catch (err) {
     console.log('Error', err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
+
+// update user details
+module.exports.updateUser = async (req, res) => {
+  const userId = req.profile._id;
+  const { username, about, photoUrl } = req.body;
+  try {
+    const nameExist = await User.findOne({ username, _id: { $ne: userId } });
+    if (nameExist) {
+      return res.status(403).json({
+        error: 'Username is token'
+      });
+    }
+    const user = await User.findOne({ _id: userId });
+    user.username = username;
+    user.about = about;
+    user.photoUrl = photoUrl;
+    await user.save();
+    return res.status(200).json(user);
+  } catch (err) {
+    console.log('Error', err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
   }
 };
