@@ -9,6 +9,7 @@ const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
 const expressJWT = require('express-jwt');
+const md5 = require('md5');
 
 // set sendGrid api key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -73,7 +74,10 @@ module.exports.signUp = async (req, res) => {
     let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
     const { username, email, password } = decoded;
     const hashed_password = await bcrypt.hash(password, 10);
-    const user = new User({ username, email, hashed_password });
+    const photoUrl = `https://www.gravatar.com/avatar/${md5(
+      email
+    )}?d=identicon`;
+    const user = new User({ username, email, hashed_password, photoUrl });
     await user.save();
     res.status(200).json({
       message: 'Sign Up success, please sign in'
