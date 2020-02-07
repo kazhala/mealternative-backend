@@ -130,7 +130,7 @@ module.exports.signIn = async (req, res) => {
       );
       if (passwordMatch) {
         console.log(user);
-        const { _id, username, email, role } = user;
+        const { _id, username, email, role, photoUrl } = user;
         // 7 day expiry date
         const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
           expiresIn: '7d'
@@ -139,7 +139,7 @@ module.exports.signIn = async (req, res) => {
         res.cookie('token', token, { expiresIn: '7d' });
         res.status(200).json({
           token,
-          user: { _id, username, email, role }
+          user: { _id, username, email, role, photoUrl }
         });
       } else {
         res.status(401).json({
