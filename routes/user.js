@@ -8,14 +8,18 @@ const router = express.Router();
 
 // middlewars
 const { runValidation } = require('../validators');
-const { userUpdateValidator } = require('../validators/user');
+const {
+  userUpdateValidator,
+  userPasswordValidator
+} = require('../validators/user');
 const { requireSignIn, authMiddleware } = require('../controllers/auth');
 const {
   bookmarkRecipe,
   listUserRecipe,
   readUser,
   listUserBookmarks,
-  updateUser
+  updateUser,
+  updatePassword
 } = require('../controllers/user');
 
 // routes
@@ -47,6 +51,14 @@ router.put(
   requireSignIn,
   authMiddleware,
   updateUser
+);
+router.put(
+  '/user/:userId/password',
+  userPasswordValidator,
+  runValidation,
+  requireSignIn,
+  authMiddleware,
+  updatePassword
 );
 
 // update detail

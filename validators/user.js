@@ -11,3 +11,12 @@ module.exports.userUpdateValidator = [
     .notEmpty()
     .withMessage('PhotoUrl is required')
 ];
+
+module.exports.userPasswordValidator = [
+  check('oldPassword')
+    .notEmpty()
+    .withMessage('Please enter your old password'),
+  check('newPassword')
+    .isLength({ min: 6 })
+    .withMessage('Password need to be at least 6 characters long')
+];

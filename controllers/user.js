@@ -7,6 +7,9 @@ const User = require('../models/user');
 const Recipe = require('../models/recipe');
 const Bookmark = require('../models/bookmark');
 
+// package
+const bcrypt = require('bcrypt');
+
 // bookmark a recipe
 module.exports.bookmarkRecipe = async (req, res) => {
   const recipeId = req.params.recipeId;
@@ -137,5 +140,32 @@ module.exports.updateUser = async (req, res) => {
     return res.status(500).json({
       error: 'Something went wrong..'
     });
+  }
+};
+
+// update user password
+module.exports.updatePassword = async (req, res) => {
+  const userId = req.profile._id;
+  const { oldPassword, newPassword } = req.body;
+  try {
+    const user = await User.findOne({ _id: userId }).select('+hashed_password');
+    const passwordMatch = await bcrypt.compare(
+      oldPassword,
+      user.hashed_password
+    );
+    if (!passwordMatch) {
+      return res.status(401).json({
+        error: 'Password does not match'
+      });
+    } else {
+      const newHashed_password = await bcrypt.hash(newPassword, 10);
+      user.hashed_password = newHashed_password;
+      await user.save();
+      return res.status(200).json({
+        message: 'Successfully updated password'
+      });
+    }
+  } catch (err) {
+    console.log('Error', err);
   }
 };
