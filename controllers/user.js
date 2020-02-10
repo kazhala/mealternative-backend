@@ -129,7 +129,7 @@ module.exports.updateUser = async (req, res) => {
         error: 'Username is token'
       });
     }
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findOne({ _id: userId }).select('-role');
     user.username = username;
     user.about = about;
     user.photoUrl = photoUrl;
