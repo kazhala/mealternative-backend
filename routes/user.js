@@ -19,7 +19,8 @@ const {
   readUser,
   listUserBookmarks,
   updateUser,
-  updatePassword
+  updatePassword,
+  checkNameExist
 } = require('../controllers/user');
 
 // routes
@@ -44,6 +45,7 @@ router.get(
 );
 
 // update user information
+router.get('/user/check/:userId/:username', checkNameExist);
 router.put(
   '/user/:userId/details',
   userUpdateValidator,
@@ -60,8 +62,5 @@ router.put(
   authMiddleware,
   updatePassword
 );
-
-// update detail
-// TODO
 
 module.exports = router;

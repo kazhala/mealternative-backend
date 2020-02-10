@@ -123,18 +123,34 @@ module.exports.updateUser = async (req, res) => {
   const userId = req.profile._id;
   const { username, about, photoUrl } = req.body;
   try {
-    const nameExist = await User.findOne({ username, _id: { $ne: userId } });
-    if (nameExist) {
-      return res.status(403).json({
-        error: 'Username is token'
-      });
-    }
     const user = await User.findOne({ _id: userId }).select('-role');
     user.username = username;
     user.about = about;
     user.photoUrl = photoUrl;
     await user.save();
     return res.status(200).json(user);
+  } catch (err) {
+    console.log('Error', err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
+
+module.exports.checkNameExist = async (req, res) => {
+  const username = req.params.username;
+  const userId = req.params.userId;
+  try {
+    const user = await User.findOne({ username, _id: { $ne: userId } });
+    if (user) {
+      return res.status(400).json({
+        error: 'Username already exists'
+      });
+    } else {
+      return res.status(200).json({
+        message: 'Ok'
+      });
+    }
   } catch (err) {
     console.log('Error', err);
     return res.status(500).json({
