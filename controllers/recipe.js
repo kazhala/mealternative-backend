@@ -167,6 +167,9 @@ module.exports.updateLikes = async (req, res) => {
     if (liked) {
       await liked.remove();
       await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: -1 } });
+      return res.status(200).json({
+        message: 'You just canceled like for this post'
+      });
     } else {
       liked = new Like({
         user: userId,
@@ -174,10 +177,10 @@ module.exports.updateLikes = async (req, res) => {
       });
       await liked.save();
       await Recipe.findOneAndUpdate({ _id: recipeId }, { $inc: { likes: 1 } });
+      return res.status(200).json({
+        message: 'You just liked this recipe'
+      });
     }
-    return res.status(200).json({
-      message: 'Success increment likes'
-    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({

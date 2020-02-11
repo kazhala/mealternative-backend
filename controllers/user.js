@@ -22,6 +22,9 @@ module.exports.bookmarkRecipe = async (req, res) => {
         { _id: recipeId },
         { $inc: { bookmarks: -1 } }
       );
+      return res.status(200).json({
+        message: 'Canceled bookmark'
+      });
     } else {
       bookmarked = new Bookmark({
         user: userId,
@@ -32,10 +35,10 @@ module.exports.bookmarkRecipe = async (req, res) => {
         { _id: recipeId },
         { $inc: { bookmarks: 1 } }
       );
+      return res.status(200).json({
+        message: 'Success bookmark'
+      });
     }
-    return res.status(200).json({
-      message: 'Success bookmark'
-    });
   } catch (err) {
     console.log(err);
   }
