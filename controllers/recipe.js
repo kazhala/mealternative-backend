@@ -94,7 +94,9 @@ module.exports.deleteRecipe = async (req, res) => {
       await Bookmark.deleteMany({ recipe: recipeId });
       await Like.deleteMany({ recipe: recipeId });
       await Rating.deleteMany({ recipe: recipeId });
-      return res.status(200).json(response);
+      return res.status(200).json({
+        message: 'Delete success'
+      });
     } else {
       return res.status(404).json({
         error: 'Did not find the recipe'
