@@ -174,7 +174,7 @@ module.exports.updatePassword = async (req, res) => {
     );
     if (!passwordMatch) {
       return res.status(401).json({
-        error: 'Password does not match'
+        error: 'Wrong password, please re-enter orignial password'
       });
     } else {
       const newHashed_password = await bcrypt.hash(newPassword, 10);
