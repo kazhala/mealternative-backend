@@ -258,9 +258,9 @@ module.exports.listRandomRecipe = async (req, res) => {
     let orderNum = Math.floor(Math.random() * 13);
     const sortArr = [
       '_id',
-      'likes',
-      'bookmarks',
-      'rating',
+      '-likes',
+      '-bookmarks',
+      '-rating',
       'updatedAt',
       'createdAt',
       'title',
@@ -281,6 +281,7 @@ module.exports.listRandomRecipe = async (req, res) => {
       .select('-steps')
       .select('-categories')
       .sort(sortArr[orderNum])
+      .collation({ locale: 'en' })
       .limit(size)
       .skip(skip);
     return res
