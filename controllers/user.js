@@ -105,7 +105,7 @@ module.exports.readUser = async (req, res) => {
 
 // retrieve user bookmarks
 module.exports.listUserBookmarks = async (req, res) => {
-  const userId = req.profile._id;
+  const userId = req.params.userId;
   try {
     const bookmarks = await Bookmark.find({ user: userId }).populate({
       path: 'recipe',

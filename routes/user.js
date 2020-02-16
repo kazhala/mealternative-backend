@@ -37,12 +37,7 @@ router.get('/user/:userId/recipes', listUserRecipe);
 router.get('/user/:userId/details', readUser);
 
 // list user bookmarks
-router.get(
-  '/user/:userId/bookmarks',
-  requireSignIn,
-  authMiddleware,
-  listUserBookmarks
-);
+router.get('/user/:userId/bookmarks', listUserBookmarks);
 
 // update user information
 router.get('/user/check/:userId/:username', checkNameExist);
