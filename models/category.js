@@ -12,6 +12,12 @@ const categorySchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 50,
     unique: true
+  },
+  imageUrl: {
+    type: String,
+    trim: true,
+    require: true,
+    lowercase: true
   }
 });
 
