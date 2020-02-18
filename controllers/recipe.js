@@ -343,6 +343,7 @@ module.exports.listCategoryRecipe = async (req, res) => {
   const page = query.page ? query.page : 1;
   const size = query.size ? query.size : 10;
   const skip = (page - 1) * size;
+  const sort = query.sort ? query.sort : '-rating';
   if (!categoryId) {
     return res.status(404).json({
       error: 'Missing categoryid'
@@ -353,7 +354,8 @@ module.exports.listCategoryRecipe = async (req, res) => {
       .limit(size)
       .skip(skip)
       .populate('postedBy', 'username photoUrl')
-      .select('-ingredients');
+      .select('-ingredients')
+      .sort(sort);
     const responseData = {
       recipes,
       page
