@@ -340,14 +340,25 @@ module.exports.updateRating = async (req, res) => {
 module.exports.listCategoryRecipe = async (req, res) => {
   const { query } = req;
   const categoryId = query.id;
+  const page = query.page ? query.page : 1;
+  const size = query.size ? query.size : 10;
+  const skip = (page - 1) * size;
   if (!categoryId) {
     return res.status(404).json({
       error: 'Missing categoryid'
     });
   }
   try {
-    const response = await Recipe.find({ categories: categoryId });
-    return res.status(200).json(response);
+    const recipes = await Recipe.find({ categories: categoryId })
+      .limit(size)
+      .skip(skip)
+      .populate('postedBy', 'username photoUrl')
+      .select('-ingredients');
+    const responseData = {
+      recipes,
+      page
+    };
+    return res.status(200).json(responseData);
   } catch (err) {
     console.log('Error', err);
     return res.status(500).json({
