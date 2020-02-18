@@ -22,7 +22,8 @@ const {
   updateLikes,
   listSearch,
   listRandomRecipe,
-  updateRating
+  updateRating,
+  listCategoryRecipe
 } = require('../controllers/recipe');
 
 // recipe crud
@@ -48,6 +49,7 @@ router.put(
 // recipe list/search
 router.get('/recipes/search', listSearch);
 router.get('/recipes/list', listRandomRecipe);
+router.get('/recipes/category', listCategoryRecipe);
 
 // recipe likes
 router.put(
@@ -56,7 +58,7 @@ router.put(
   authMiddleware,
   updateLikes
 );
-
+// recipe rating
 router.put(
   '/recipe/rating/:recipeId',
   recipeRatingValidator,

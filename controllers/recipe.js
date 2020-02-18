@@ -335,3 +335,23 @@ module.exports.updateRating = async (req, res) => {
     });
   }
 };
+
+// list category recipes
+module.exports.listCategoryRecipe = async (req, res) => {
+  const { query } = req;
+  const categoryId = query.id;
+  if (!categoryId) {
+    return res.status(404).json({
+      error: 'Missing categoryid'
+    });
+  }
+  try {
+    const response = await Recipe.find({ categories: categoryId });
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log('Error', err);
+    return res.status(500).json({
+      error: 'Something went wrong..'
+    });
+  }
+};
