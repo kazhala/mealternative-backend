@@ -7,6 +7,7 @@ const Recipe = require('../models/recipe');
 const Like = require('../models/like');
 const Bookmark = require('../models/bookmark');
 const Rating = require('../models/rating');
+const Category = require('../models/category');
 
 // create recipe
 module.exports.createRecipe = async (req, res) => {
@@ -356,9 +357,11 @@ module.exports.listCategoryRecipe = async (req, res) => {
       .populate('postedBy', 'username photoUrl')
       .select('-ingredients')
       .sort(sort);
+    const category = await Category.findOne({ _id: categoryId });
     const responseData = {
       recipes,
-      page
+      page,
+      category
     };
     return res.status(200).json(responseData);
   } catch (err) {
