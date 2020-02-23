@@ -341,10 +341,12 @@ module.exports.updateRating = async (req, res) => {
 module.exports.listCategoryRecipe = async (req, res) => {
   const { query } = req;
   const categoryId = query.id;
-  const page = query.page ? query.page : 1;
-  const size = query.size ? query.size : 10;
+  const page = query.page ? Number(query.page) : 1;
+  const size = query.size ? Number(query.size) : 10;
   const skip = (page - 1) * size;
   const sort = query.sort ? query.sort : '-rating';
+  const totalDocuments = await Recipe.count({ categories: categoryId });
+  const totalPages = Math.ceil(totalDocuments / size);
   if (!categoryId) {
     return res.status(404).json({
       error: 'Missing categoryid'
@@ -361,7 +363,8 @@ module.exports.listCategoryRecipe = async (req, res) => {
     const responseData = {
       recipes,
       page,
-      category
+      category,
+      totalPages
     };
     return res.status(200).json(responseData);
   } catch (err) {
