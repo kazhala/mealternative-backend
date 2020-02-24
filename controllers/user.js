@@ -54,15 +54,15 @@ module.exports.listUserRecipe = async (req, res) => {
   const search = req.query.search;
   try {
     if (!search) {
-      const response = await Recipe.find({ postedBy: userId })
+      const recipes = await Recipe.find({ postedBy: userId })
         .select('-ingredients')
         .populate('categories', 'name')
         .sort(orderBy)
         .limit(size)
         .skip(skip);
-      return res.status(200).json(response);
+      return res.status(200).json({ recipes, page });
     } else {
-      const response = await Recipe.find({
+      const recipes = await Recipe.find({
         postedBy: userId,
         $or: [
           { title: { $regex: search, $options: 'i' } },
@@ -74,7 +74,7 @@ module.exports.listUserRecipe = async (req, res) => {
         .sort(orderBy)
         .limit(size)
         .skip(skip);
-      return res.status(200).json(response);
+      return res.status(200).json({ recipes, page });
     }
   } catch (err) {
     console.log(err);
