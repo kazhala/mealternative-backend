@@ -53,6 +53,8 @@ module.exports.listUserRecipe = async (req, res) => {
   const skip = (page - 1) * size;
   const search = req.query.search;
   try {
+    const totalEntries = await Recipe.count({ postedBy: userId });
+    const totalPages = Math.ceil(totalEntries / size);
     if (!search) {
       const recipes = await Recipe.find({ postedBy: userId })
         .select('-ingredients')
@@ -60,7 +62,7 @@ module.exports.listUserRecipe = async (req, res) => {
         .sort(orderBy)
         .limit(size)
         .skip(skip);
-      return res.status(200).json({ recipes, page });
+      return res.status(200).json({ recipes, page, totalPages });
     } else {
       const recipes = await Recipe.find({
         postedBy: userId,
@@ -74,7 +76,7 @@ module.exports.listUserRecipe = async (req, res) => {
         .sort(orderBy)
         .limit(size)
         .skip(skip);
-      return res.status(200).json({ recipes, page });
+      return res.status(200).json({ recipes, page, totalPages });
     }
   } catch (err) {
     console.log(err);
