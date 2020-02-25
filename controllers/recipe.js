@@ -206,6 +206,13 @@ module.exports.listSearch = async (req, res) => {
 
   if (search) {
     try {
+      const totalEntries = await Recipe.count({
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ]
+      });
+      const totalPages = Math.ceil(totalEntries / size);
       // find base on title or description
       const response = await Recipe.find({
         $or: [
@@ -219,7 +226,9 @@ module.exports.listSearch = async (req, res) => {
         .sort(orderBy)
         .limit(size)
         .skip(skip);
-      return res.status(200).json(response);
+      return res
+        .status(200)
+        .json({ response, page, sortOption: orderBy, totalPages });
     } catch (err) {
       console.log(err);
       return res.status(500).json({
