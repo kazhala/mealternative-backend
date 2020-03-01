@@ -7,8 +7,8 @@ const Recipe = require('../models/recipe');
 // create
 module.exports.createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
-    let category = new Category({ name });
+    const { name, imageUrl } = req.body;
+    let category = new Category({ name, imageUrl });
     await category.save();
     return res.status(200).json({
       message: 'Category successfully created'
