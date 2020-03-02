@@ -295,15 +295,13 @@ module.exports.listRandomRecipe = async (req, res) => {
       .collation({ locale: 'en' })
       .limit(size)
       .skip(skip);
-    return res
-      .status(200)
-      .json({
-        response,
-        sortOption: sortArr[orderNum],
-        page,
-        totalPages,
-        size
-      });
+    return res.status(200).json({
+      response,
+      sortOption: sortArr[orderNum],
+      page,
+      totalPages,
+      size
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({
@@ -380,7 +378,8 @@ module.exports.listCategoryRecipe = async (req, res) => {
       recipes,
       page,
       category,
-      totalPages
+      totalPages,
+      size
     };
     return res.status(200).json(responseData);
   } catch (err) {
