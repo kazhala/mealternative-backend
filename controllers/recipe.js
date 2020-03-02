@@ -228,7 +228,7 @@ module.exports.listSearch = async (req, res) => {
         .skip(skip);
       return res
         .status(200)
-        .json({ response, page, sortOption: orderBy, totalPages });
+        .json({ response, page, sortOption: orderBy, totalPages, size });
     } catch (err) {
       console.log(err);
       return res.status(500).json({
@@ -251,6 +251,7 @@ module.exports.listRandomRecipe = async (req, res) => {
     const totalEntries = await Recipe.countDocuments({});
     // default size 10
     const size = query.size ? Number(query.size) : 10;
+    console.log('size', size);
     // calculate total page
     const totalPages = Math.ceil(totalEntries / size);
     // generate random page if first query
@@ -296,7 +297,13 @@ module.exports.listRandomRecipe = async (req, res) => {
       .skip(skip);
     return res
       .status(200)
-      .json({ response, sortOption: sortArr[orderNum], page, totalPages });
+      .json({
+        response,
+        sortOption: sortArr[orderNum],
+        page,
+        totalPages,
+        size
+      });
   } catch (err) {
     console.log(err);
     return res.status(500).json({
