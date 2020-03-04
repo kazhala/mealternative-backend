@@ -46,7 +46,7 @@ const recipeSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default:
-        'https://res.cloudinary.com/kazhala/image/upload/v1578954595/mealternative/noimage_jo5klk.png',
+        'https://res.cloudinary.com/kazhala/image/upload/c_scale,h_1000,w_1500/v1583356356/mealternative/noimage_wclxmf.png',
       lowercase: true
     },
     categories: {
