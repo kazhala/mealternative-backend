@@ -8,7 +8,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "start": "nodemon app.js",
+    "deploy": "git archive -v -o mealternative.zip --format=zip HEAD && aws s3 mv mealternative.zip s3://elasticbeanstalk-ap-southeast-2-378756445655"
   },
   "keywords": [],
   "author": "KAZhala",
