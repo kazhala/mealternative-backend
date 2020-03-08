@@ -8,7 +8,7 @@ const Recipe = require('../models/recipe');
 const Bookmark = require('../models/bookmark');
 
 // package
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // bookmark a recipe
 module.exports.bookmarkRecipe = async (req, res) => {

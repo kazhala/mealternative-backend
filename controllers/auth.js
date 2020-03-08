@@ -5,7 +5,7 @@
 // model
 const User = require('../models/user');
 // package
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
 const expressJWT = require('express-jwt');
