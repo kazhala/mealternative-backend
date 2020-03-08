@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "zip": "git archive -v -o mealternative.zip --format=zip HEAD"
+    "zip": "git archive -v -o mealternative.zip --format=zip HEAD && faws s3 upload -m -P mealternative.zip"
   },
   "keywords": [],
   "author": "KAZhala",
