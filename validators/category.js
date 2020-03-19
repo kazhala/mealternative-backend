@@ -18,10 +18,6 @@ module.exports.categoryDeleteValidator = [
 
 module.exports.categoryUpdateValidator = [
   check('name')
-    .isLength({ min: 3, max: 50 })
-    .withMessage('Category name is either too long or too short'),
-  check('oldName')
-    .not()
-    .isEmpty()
+    .notEmpty()
     .withMessage("Can't find the category to update")
 ];
