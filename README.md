@@ -52,12 +52,12 @@ EOF
 5. Start the server (server will be running in port 8000)
 
 ```bash
-npm start
+npm run dev
 ```
 
 6. Break Everything:)
 
-## MongoDB setup
+### MongoDB setup
 
 > You can use a local mongo setup, this part only demonstrate how to set up mongoDB atlas
 
@@ -74,3 +74,81 @@ npm start
    ![](https://user-images.githubusercontent.com/43941510/78612691-504b2a00-78ad-11ea-9d2b-d79909aa413b.png)
 7. Make sure the Driver is Node.js and copy the mongoDB connection string with your new mongo user's username and password (created in step 5)
 8. Put the mongoDB connection string into the .env file
+
+### SendGrid setup
+
+> SendGrid is a fully managed fantastic email service, you get a huge amount of free tier usage as well
+
+1. Register a free account at [SendGrid](https://sendgrid.com/)
+2. Leave everything as default, you do not need to configure anything
+   > The backend uses the [NPM](https://www.npmjs.com/package/@sendgrid/mail) package sendgrid provide
+3. Navigate to the API keys section
+4. Create a new API Key
+   ![](https://user-images.githubusercontent.com/43941510/78725463-f319ac00-7972-11ea-8651-3c7ad1466e6a.png)
+5. Copy the API key and put it in the .env file mentioned in Step4 of [Usage](https://github.com/kazhala/mealternative-backend#Usage)
+
+## Deployment and Hosting
+
+### Frontend
+
+The frontend of this project is hosted on an AWS s3 bucket and distributed through CloudFront.
+[Here](https://github.com/kazhala/AWSCloudFormationStacks/blob/master/Hosting_frontend_S3.yaml) is the custom cloudformation deployment template.
+
+### Backend
+
+The backend of this project is hosted on AWS ec2 instance through elastic beanstalk. [Here](https://github.com/kazhala/AWSCloudFormationStacks/blob/master/Hosting_backend_nodejs.yaml) is the custom cloudformation deployment template.
+
+### Using the template
+
+> Note: Backend template is intended to use with registered domain and a static frontend with the frontend template. If you are looking for deploying a nodejs backend without involvement of route53 on AWS, simply google mern stack AWS, there's so many different ways
+
+> This template demonstrate how to setup elasticbeanstalk through cloudformation, you could of course install elasticbeanstalk cli and use it differently
+
+1. Frontend template usage is [here](https://github.com/kazhala/mealternative-backend)
+2. If you haven't use elasticbeanstalk before or don't have a elasticbeanstalk dedicated S3 bucket, run this command
+
+```bash
+aws elasticbeanstalk create-storage-location
+```
+
+3. Zip up the entire code
+
+```bash
+git archive -v -o mealternative.zip --format=zip HEAD
+```
+
+4. Upload the zip file to the s3 bucket created by step2
+   > It is suggested to create a sub "folder" in s3 to hold each application, e.g. s3://elasticbeanstalk/mealternative/yourzip
+
+```bash
+aws s3 mv mealternative.zip s3://<Yourelasticbeanstalkbucket>/mealternative/mealternative.zip
+```
+
+5. Download the backend template and modify all of [this](https://github.com/kazhala/AWSCloudFormationStacks/blob/e1b9069a52a0ee3609ae170dbcce0dbbd9584c4b/Hosting_backend_nodejs.yaml#L102) values
+   > Change all of the {{resolve:ssm:/mealternative/XXX:1}} to the env variables in your .env file.
+   > If you have experience with AWS system manager, you could just go to system manager and create the appropriate the parameters in parameter store
+
+```yaml
+- Namespace: aws:elasticbeanstalk:application:environment
+  OptionName: PORT
+  Value: <YourValue>
+- Namespace: aws:elasticbeanstalk:application:environment
+  OptionName: CLIENT_URL
+  Value: <YourValue>
+# And change all of the rest with {{resolve:ssm:/mealternative/XXX:1}} to your value
+```
+
+6. Register a SSL certificate through ACM in your region, rather than the us-east-1 mentioned in frontend template
+
+   > Used for https connections between frontend and backend
+
+7. Create a cloudformation stack with the modified template
+
+   - ApplicationName: Any name you prefer
+   - S3ZipKey: the path of your zip file in s3 elasticbeanstalk bucket (E.g. In this setup example, mealternative/mealternative.zip)
+   - KeyPair: an existing EC2 key pair, if you don't have one, create one in EC2 console
+   - SSLCertificateArn: ssl certificate arn from step 6
+   - HostedZoneId: the route53 hosted zone that hosts your domain name
+   - FrontendStack: reference the name of the frontend stack
+
+8. Once the stack is created, your backend should be live
