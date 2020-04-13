@@ -5,7 +5,7 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema;
 
-const arrayMinLength = val => {
+const arrayMinLength = (val) => {
   return val.length > 0;
 };
 
@@ -14,18 +14,16 @@ const stepSchema = new mongoose.Schema({
     type: String,
     trim: true,
     minlength: 3,
-    maxlength: 60
   },
   stepImageUrl: {
     type: String,
     trim: true,
-    lowercase: true
+    lowercase: true,
   },
   stepDescriptions: {
     type: String,
     trim: true,
-    maxlength: 1000
-  }
+  },
 });
 
 const recipeSchema = new mongoose.Schema(
@@ -34,46 +32,46 @@ const recipeSchema = new mongoose.Schema(
       type: String,
       trim: true,
       minlength: 3,
-      maxlength: 60,
-      required: true
+      required: true,
     },
     description: {
       type: String,
       trim: true,
-      maxlength: 1000
     },
     thumbImageUrl: {
       type: String,
       trim: true,
       default:
         'https://res.cloudinary.com/kazhala/image/upload/c_scale,h_1000,w_1500/v1583356356/mealternative/noimage_wclxmf.png',
-      lowercase: true
+      lowercase: true,
     },
     categories: {
       type: [{ type: ObjectId, ref: 'Category' }],
-      validate: [arrayMinLength, '{PATH} needs at least one entry']
+      validate: [arrayMinLength, '{PATH} needs at least one entry'],
     },
-    ingredients: [{ type: String, trim: true, lowercase: true, maxlength: 30 }],
+    ingredients: [
+      { type: String, trim: true, lowercase: true, maxlength: 100 },
+    ],
     steps: {
       type: [stepSchema],
-      validate: [arrayMinLength, '{PATH} needs at least one entry']
+      validate: [arrayMinLength, '{PATH} needs at least one entry'],
     },
     likes: {
       type: Number,
-      default: 0
+      default: 0,
     },
     bookmarks: {
       type: Number,
-      default: 0
+      default: 0,
     },
     rating: {
       type: Number,
-      default: 0
+      default: 0,
     },
     postedBy: {
       type: ObjectId,
-      ref: 'User'
-    }
+      ref: 'User',
+    },
   },
   { timestamps: true }
 );

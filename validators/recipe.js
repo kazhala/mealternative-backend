@@ -15,7 +15,7 @@ module.exports.recipeCreateValidator = [
     .withMessage('Should have at least one step'),
   check('steps.*.stepTitle')
     .isLength({ min: 3 })
-    .withMessage('Each step title should be within 3 and 60'),
+    .withMessage('Each step title should be at least 3 characters'),
 ];
 
 module.exports.recipeUpdateValidator = [
