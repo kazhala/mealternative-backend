@@ -18,7 +18,6 @@ const stepSchema = new mongoose.Schema({
   stepImageUrl: {
     type: String,
     trim: true,
-    lowercase: true,
   },
   stepDescriptions: {
     type: String,
@@ -43,7 +42,6 @@ const recipeSchema = new mongoose.Schema(
       trim: true,
       default:
         'https://res.cloudinary.com/kazhala/image/upload/c_scale,h_1000,w_1500/v1583356356/mealternative/noimage_wclxmf.png',
-      lowercase: true,
     },
     categories: {
       type: [{ type: ObjectId, ref: 'Category' }],
