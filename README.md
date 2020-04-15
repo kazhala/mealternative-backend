@@ -34,7 +34,7 @@ npm install
 4. Create the required .env file with below environment variables in it. Note: you will need to use
    one of your existing [mongoDB](https://www.mongodb.com/) cluster or create a new cluster as well
    as a [sendgrid](https://sendgrid.com/) API key. Freetier is more than enough for both of this.
-   Detailed explanation [here](https://github.com/kazhala/mealternative-backend#MongoDB-setup)
+   Detailed explanation [here](#mongodb-setup)
 
 ```bash
 cat << EOF > .env
@@ -96,7 +96,7 @@ The frontend of this project is hosted on an AWS s3 bucket and distributed throu
 
 ### Backend
 
-The backend of this project is hosted on AWS ec2 instance through elastic beanstalk. [Here](https://github.com/kazhala/AWSCloudFormationStacks/blob/master/Hosting_backend_nodejs.yaml) is the custom cloudformation deployment template.
+The backend of this project is hosted on AWS ec2 instance through elastic beanstalk. [Here](https://github.com/kazhala/AWSCloudFormationStacks/blob/master/Hosting_backend_nodejs.yaml) is the custom deployment cloudformation template.
 
 ### Using the template
 
